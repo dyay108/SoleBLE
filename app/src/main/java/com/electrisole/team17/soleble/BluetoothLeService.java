@@ -300,4 +300,11 @@ public class BluetoothLeService extends Service {
 
         return mBluetoothGatt.getServices();
     }
+
+    public BluetoothGattService getService(){
+        UUID serv = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
+        return mBluetoothGatt.getService(serv);
+        }
+
+
 }

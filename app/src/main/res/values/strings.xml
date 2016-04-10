@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SoleBLE</string>
+    <string name="app_name">ElectriSole</string>
     <string name="title_activity_device_control">DeviceControlActivity</string>
 
     <string name="ble_not_supported">BLE is not supported</string>

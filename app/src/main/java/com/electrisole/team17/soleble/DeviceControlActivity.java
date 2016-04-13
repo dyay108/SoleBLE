@@ -2,8 +2,11 @@ package com.electrisole.team17.soleble;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -23,6 +26,7 @@ import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +48,10 @@ public class DeviceControlActivity extends Activity {
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
-    int dat;
+    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
+            new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+    private ExpandableListView mGattServicesList;
+    UUID chara = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -52,6 +59,7 @@ public class DeviceControlActivity extends Activity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+
             if (!mBluetoothLeService.initialize()) {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
@@ -90,14 +98,25 @@ public class DeviceControlActivity extends Activity {
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 //displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                List<BluetoothGattService> servs = mBluetoothLeService.getSupportedGattServices();
+                for (int i = 0; servs.size() > i; i++) {
+
+                    List<BluetoothGattCharacteristic> charac = servs.get(i).getCharacteristics();
+                    for (int j = 0; charac.size() > i; i++) {
+                        BluetoothGattCharacteristic ch = charac.get(i);
+                        if (ch.getUuid() == chara) {
+                            mBluetoothLeService.readCharacteristic(ch);
+                            mBluetoothLeService.setCharacteristicNotification(ch,true);
+                        }
+                    }
+                }
+
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                UUID chara = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
-                dat = mBluetoothLeService.getService().getCharacteristic(chara).getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0);
-                //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
-                displayData((String.valueOf(dat)));
+                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
         }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,12 +133,9 @@ public class DeviceControlActivity extends Activity {
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-
-
-
-
-
     }
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -156,6 +172,7 @@ public class DeviceControlActivity extends Activity {
     private void displayData(String data) {
         if (data != null) {
             mDataField.setText(data);
+
         }
     }
 
@@ -175,5 +192,6 @@ public class DeviceControlActivity extends Activity {
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
         return intentFilter;
     }
+
 
 }

@@ -76,6 +76,9 @@ public class BluetoothLeService extends Service {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
+                List<BluetoothGattService> services = gatt.getServices();
+                gatt.readCharacteristic(services.get(2).getCharacteristics().get
+                        (0));
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
@@ -125,13 +128,11 @@ public class BluetoothLeService extends Service {
             intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
         } else {
             // For all other profiles, writes the data formatted in HEX.
-            final byte[] data = characteristic.getValue();
-            if (data != null && data.length > 0) {
-                final StringBuilder stringBuilder = new StringBuilder(data.length);
-                for(byte byteChar : data)
-                    stringBuilder.append(String.format("%02X ", byteChar));
-                intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
-            }
+            if(characteristic.getValue()!=null){
+            final int data = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT32, 0);
+
+                intent.putExtra(EXTRA_DATA,String.valueOf(data));}
+
         }
         sendBroadcast(intent);
     }
@@ -301,9 +302,10 @@ public class BluetoothLeService extends Service {
         return mBluetoothGatt.getServices();
     }
 
-    public BluetoothGattService getService(){
+    public BluetoothGattCharacteristic getService(){
+        if (mBluetoothGatt == null) return null;
         UUID serv = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
-        return mBluetoothGatt.getService(serv);
+        return mBluetoothGatt.getServices().get(2).getCharacteristics().get(0);
         }
 
 

@@ -83,7 +83,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/data"
         android:layout_alignBottom="@+id/textView3"
-        android:layout_alignStart="@+id/button" />
+        android:layout_alignStart="@+id/button"
+        android:text="NO DATA" />
 
     <TextView
         android:layout_width="wrap_content"

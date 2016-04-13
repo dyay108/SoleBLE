@@ -86,11 +86,18 @@ public class BluetoothLeService extends Service {
         }
 
         @Override
-        public void onCharacteristicRead(BluetoothGatt gatt,
+        public void onCharacteristicRead(final BluetoothGatt gatt,final
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+                        gatt.readCharacteristic(characteristic);
+                    }
+                }).start();
+
             }
         }
 
@@ -264,6 +271,7 @@ public class BluetoothLeService extends Service {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
+
         mBluetoothGatt.readCharacteristic(characteristic);
     }
 

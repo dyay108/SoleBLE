@@ -38,6 +38,8 @@ public class DeviceControlActivity extends Activity {
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
 
     private TextView mConnectionState;
+    private TextView mMilesData;
+    private TextView mCaloriesData;
     private TextView mDataField;
     private String mDeviceName;
     private String mDeviceAddress;
@@ -103,16 +105,20 @@ public class DeviceControlActivity extends Activity {
 
                     List<BluetoothGattCharacteristic> charac = servs.get(i).getCharacteristics();
                     for (int j = 0; charac.size() > i; i++) {
-                        BluetoothGattCharacteristic ch = charac.get(i);
+                         BluetoothGattCharacteristic ch = charac.get(i);
                         if (ch.getUuid() == chara) {
                             mBluetoothLeService.readCharacteristic(ch);
-                            mBluetoothLeService.setCharacteristicNotification(ch,true);
+                            mBluetoothLeService.setCharacteristicNotification(ch, true);
+
+
                         }
                     }
                 }
 
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                mMilesData.setText((Integer.parseInt(mDataField.getText().toString())/2250) + " miles");
+                mCaloriesData.setText((Integer.parseInt(mDataField.getText().toString())/20) + " calories");
             }
         }
     };
@@ -128,6 +134,8 @@ public class DeviceControlActivity extends Activity {
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data);
+        mMilesData = (TextView) findViewById(R.id.miles);
+        mCaloriesData= (TextView) findViewById(R.id.kcal);
 
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);

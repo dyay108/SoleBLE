@@ -104,8 +104,8 @@ public class DeviceControlActivity extends Activity {
                 for (int i = 0; servs.size() > i; i++) {
 
                     List<BluetoothGattCharacteristic> charac = servs.get(i).getCharacteristics();
-                    for (int j = 0; charac.size() > i; i++) {
-                         BluetoothGattCharacteristic ch = charac.get(i);
+                    for (int j = 0; charac.size() > j; j++) {
+                         BluetoothGattCharacteristic ch = charac.get(j);
                         if (ch.getUuid() == chara) {
                             mBluetoothLeService.readCharacteristic(ch);
                             mBluetoothLeService.setCharacteristicNotification(ch, true);

@@ -90,13 +90,18 @@ public class BluetoothLeService extends Service {
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-                        gatt.readCharacteristic(characteristic);
-                    }
-                }).start();
+
+                if(characteristic.getValue()!=null){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+                            gatt.readCharacteristic(characteristic);
+                        }
+                    }).start();
+
+                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+                }
 
             }
         }
@@ -309,12 +314,6 @@ public class BluetoothLeService extends Service {
 
         return mBluetoothGatt.getServices();
     }
-
-    public BluetoothGattCharacteristic getService(){
-        if (mBluetoothGatt == null) return null;
-        UUID serv = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
-        return mBluetoothGatt.getServices().get(2).getCharacteristics().get(0);
-        }
 
 
 }

@@ -55,7 +55,9 @@ public class DeviceControlActivity extends Activity {
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private ExpandableListView mGattServicesList;
     UUID chara = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
-    private List<BluetoothGattService> servs = null;
+    private List<BluetoothGattService> servs=null;
+    int step1 =0;
+    int step2 =0;
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -107,9 +109,26 @@ public class DeviceControlActivity extends Activity {
                 mBluetoothLeService.readCharacteristic(servs.get(2).getCharacteristics().get(0));*/
 
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                  //one = Integer.parseInt(intent.getStringExtra("Left"));
+                  //two = Integer.parseInt(intent.getStringExtra("Right"));
 
-                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
-                mMilesData.setText((Integer.parseInt(mDataField.getText().toString())/2250) + " miles");
+                if(intent.getStringExtra("Left")!=null){
+
+
+                    step1 =Integer.valueOf(intent.getStringExtra("Left"));
+
+
+                }
+
+                if(intent.getStringExtra("Right")!=null){
+                    //if(Integer.parseInt(intent.getStringExtra("Right"))>0){
+
+                        step2 =Integer.valueOf(intent.getStringExtra("Right"));
+
+                }
+                //Log.d(TAG, "Sum " + step1 + " " + step2);
+                mDataField.setText(String.valueOf(step1+step2));
+                mMilesData.setText((Integer.parseInt(mDataField.getText().toString()) / 2250) + " miles");
                 mCaloriesData.setText((Integer.parseInt(mDataField.getText().toString())/20) + " calories");
             }
         }
@@ -132,6 +151,7 @@ public class DeviceControlActivity extends Activity {
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
 
     }
 

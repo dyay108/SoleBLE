@@ -104,13 +104,4 @@
         android:layout_above="@+id/button"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="NO DATA"
-        android:id="@+id/data2"
-        android:layout_above="@+id/textView4"
-        android:layout_alignParentEnd="true" />
-
 </RelativeLayout>

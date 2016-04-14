@@ -45,6 +45,7 @@ public class DeviceControlActivity extends Activity {
     private String mDeviceAddress;
     //private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
+    private BluetoothLeService mBluetoothLeService2;
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
 
@@ -54,6 +55,7 @@ public class DeviceControlActivity extends Activity {
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private ExpandableListView mGattServicesList;
     UUID chara = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
+    private List<BluetoothGattService> servs = null;
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -68,6 +70,7 @@ public class DeviceControlActivity extends Activity {
             }
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
+
         }
 
         @Override
@@ -87,6 +90,7 @@ public class DeviceControlActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                mBluetoothLeService.connect("C6:39:87:17:90:CD");
                 mConnected = true;
                 updateConnectionState(R.string.connected);
                 mConnectionState.setTextColor(Color.parseColor("#FF17AA00"));
@@ -98,24 +102,12 @@ public class DeviceControlActivity extends Activity {
                 invalidateOptionsMenu();
                 //clearUI();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                // Show all the supported services and characteristics on the user interface.
-                //displayGattServices(mBluetoothLeService.getSupportedGattServices());
-                List<BluetoothGattService> servs = mBluetoothLeService.getSupportedGattServices();
-                for (int i = 0; servs.size() > i; i++) {
 
-                    List<BluetoothGattCharacteristic> charac = servs.get(i).getCharacteristics();
-                    for (int j = 0; charac.size() > j; j++) {
-                         BluetoothGattCharacteristic ch = charac.get(j);
-                        if (ch.getUuid() == chara) {
-                            mBluetoothLeService.readCharacteristic(ch);
-                            mBluetoothLeService.setCharacteristicNotification(ch, true);
-
-
-                        }
-                    }
-                }
+                /*servs = mBluetoothLeService.getSupportedGattServices();
+                mBluetoothLeService.readCharacteristic(servs.get(2).getCharacteristics().get(0));*/
 
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+
                 displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
                 mMilesData.setText((Integer.parseInt(mDataField.getText().toString())/2250) + " miles");
                 mCaloriesData.setText((Integer.parseInt(mDataField.getText().toString())/20) + " calories");
@@ -139,7 +131,7 @@ public class DeviceControlActivity extends Activity {
 
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
     }
 

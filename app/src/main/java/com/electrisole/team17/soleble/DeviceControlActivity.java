@@ -109,8 +109,6 @@ public class DeviceControlActivity extends Activity {
                 mBluetoothLeService.readCharacteristic(servs.get(2).getCharacteristics().get(0));*/
 
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                  //one = Integer.parseInt(intent.getStringExtra("Left"));
-                  //two = Integer.parseInt(intent.getStringExtra("Right"));
 
                 if(intent.getStringExtra("Left")!=null){
 

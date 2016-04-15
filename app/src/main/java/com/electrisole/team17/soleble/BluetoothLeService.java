@@ -50,7 +50,7 @@ public class BluetoothLeService extends Service {
     public final static UUID UUID_HEART_RATE_MEASUREMENT =
             UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
     public final static UUID chara = UUID.fromString("c97433f1-be8f-4dc8-b6f0-5343e6100eb4");
-    UUID chara2 = UUID.fromString("e5207b21-5612-4d0d-a087-685b437fcb5b");
+    public final static UUID chara2 = UUID.fromString("e5207b21-5612-4d0d-a087-685b437fcb5b");
 
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
@@ -94,14 +94,14 @@ public class BluetoothLeService extends Service {
             if (status == BluetoothGatt.GATT_SUCCESS) {
 
                 if(characteristic.getValue()!=null){
-                    new Thread(new Runnable() {
-                        @Override
-                       public void run() {
+                    //new Thread(new Runnable() {
+                        //@Override
+                       //public void run() {
                             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
                             gatt.readCharacteristic(characteristic);
 
-                       }
-                   }).start();
+                       //}
+                   //}).start();
 
                 //broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
                }

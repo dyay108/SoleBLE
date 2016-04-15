@@ -26,7 +26,8 @@
         android:text="Status:"
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,7 +37,8 @@
         android:id="@+id/connection_state"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textColor="#ff0000" />
+        android:textColor="#ff0000"
+        android:textStyle="normal|bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -46,7 +48,8 @@
         android:id="@+id/textView3"
         android:layout_marginTop="40dp"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/connection_state" />
+        android:layout_below="@+id/connection_state"
+        android:textStyle="italic" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -54,9 +57,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Miles Walked:"
         android:id="@+id/textView4"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="33dp"
         android:layout_below="@+id/textView3"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textStyle="italic" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -64,9 +68,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Calories Burned:"
         android:id="@+id/textView5"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="36dp"
         android:layout_below="@+id/textView4"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textStyle="italic" />
 
     <Button
         android:layout_width="wrap_content"
@@ -82,9 +87,11 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/data"
-        android:layout_alignBottom="@+id/textView3"
-        android:layout_alignStart="@+id/button"
-        android:text="NO DATA" />
+        android:text="NO DATA"
+        android:layout_above="@+id/textView4"
+        android:layout_centerHorizontal="true"
+        android:textColor="#006fff"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -93,7 +100,9 @@
         android:text="NO DATA"
         android:id="@+id/miles"
         android:layout_alignTop="@+id/textView4"
-        android:layout_alignStart="@+id/data" />
+        android:layout_centerHorizontal="true"
+        android:textColor="#006fff"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -101,7 +110,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="NO DATA"
         android:id="@+id/kcal"
-        android:layout_above="@+id/button"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignTop="@+id/textView5"
+        android:layout_centerHorizontal="true"
+        android:textColor="#006fff"
+        android:textStyle="bold" />
 
 </RelativeLayout>

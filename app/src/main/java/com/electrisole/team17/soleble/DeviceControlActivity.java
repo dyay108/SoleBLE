@@ -56,7 +56,7 @@ public class DeviceControlActivity extends Activity {
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private ExpandableListView mGattServicesList;
-    UUID chara = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
+    //UUID chara = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
     private List<BluetoothGattService> servs=null;
     int step1 =0;
     int step2 =0;
@@ -95,7 +95,7 @@ public class DeviceControlActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                //mBluetoothLeService.connect("C6:39:87:17:90:CD");
+                mBluetoothLeService.connect("C6:39:87:17:90:CD");
                 mConnected = true;
                 updateConnectionState(R.string.connected);
                 mConnectionState.setTextColor(Color.parseColor("#FF17AA00"));

@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ public class DeviceControlActivity extends Activity {
     private TextView mMilesData;
     private TextView mCaloriesData;
     private TextView mDataField;
+    private TextView mHangTime;
     private String mDeviceName;
     private String mDeviceAddress;
     //private ExpandableListView mGattServicesList;
@@ -73,6 +75,7 @@ public class DeviceControlActivity extends Activity {
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
 
+
         }
 
         @Override
@@ -92,7 +95,7 @@ public class DeviceControlActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                mBluetoothLeService.connect("C6:39:87:17:90:CD");
+                //mBluetoothLeService.connect("C6:39:87:17:90:CD");
                 mConnected = true;
                 updateConnectionState(R.string.connected);
                 mConnectionState.setTextColor(Color.parseColor("#FF17AA00"));
@@ -145,10 +148,20 @@ public class DeviceControlActivity extends Activity {
         mDataField = (TextView) findViewById(R.id.data);
         mMilesData = (TextView) findViewById(R.id.miles);
         mCaloriesData= (TextView) findViewById(R.id.kcal);
+        mHangTime = (TextView) findViewById(R.id.hang);
 
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Button hang = (Button) findViewById(R.id.ht);
+        hang.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mBluetoothLeService.writeCharacteristic(
+                        mBluetoothLeService.getSupportedGattServices().get(2).getCharacteristics().get(1));
+                mHangTime.setText(intent.getStringExtra("H"));
+            }
+        });
+
 
 
     }

@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice("E8:FF:34:49:A9:5B");
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice("C6:39:87:17:90:CD");
         final Intent intent = new Intent(this, DeviceControlActivity.class);
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());

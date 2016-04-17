@@ -16,6 +16,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.UUID;
 
@@ -108,6 +110,11 @@ public class BluetoothLeService extends Service {
 
             }
         }
+        /*@Override
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
+                                          int status){
+            gatt.writeCharacteristic(characteristic);
+        }*/
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
@@ -132,14 +139,32 @@ public class BluetoothLeService extends Service {
                 intent.putExtra("Right", String.valueOf(data));
             } else if (chara2.equals(characteristic.getUuid())) {
 
+                if(characteristic.getStringValue(0).trim().contains(":")){
+                    String hang =  characteristic.getStringValue(0).trim();
+                    Log.d(TAG, String.format("hang "+ hang ));
+                    intent.putExtra("H", hang);
+                }
+                else{
+
+
+
+
+                /*if(h.contains(":")){
+                    //String hang =  characteristic.getValue().toString();
+                    Log.d(TAG, String.format("hang " + h));
+                    intent.putExtra("Hang", h);
+                }*/
+
                 //Log.d(TAG, String.format("uuid " + characteristic.getUuid().toString()));
+
 
                 final int data2 = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT32, 0);
 
-                intent.putExtra("Left", String.valueOf(data2));
+                intent.putExtra("Left", String.valueOf(data2));}
 
                 //Log.d(TAG, String.format("uuid " + characteristic.getUuid().toString()));
             }
+
 
 
         sendBroadcast(intent);
@@ -275,6 +300,21 @@ public class BluetoothLeService extends Service {
         }
 
         mBluetoothGatt.readCharacteristic(characteristic);
+    }
+
+    public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            return false;
+        }
+        byte pepe = (byte) Integer.parseInt("1");
+        byte[] charLetra = new byte[1];
+
+        charLetra[0] = pepe;
+        characteristic.setValue(charLetra);
+        Log.i(TAG, "characteristic " + characteristic.getUuid().toString() +" "+String.valueOf(charLetra));
+        boolean status = mBluetoothGatt.writeCharacteristic(characteristic);
+        return status;
     }
 
     /**

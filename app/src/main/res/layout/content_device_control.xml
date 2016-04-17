@@ -73,15 +73,6 @@
         android:layout_alignParentStart="true"
         android:textStyle="italic" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hangtime"
-        android:id="@+id/button"
-        android:layout_marginTop="62dp"
-        android:layout_below="@+id/textView5"
-        android:layout_toEndOf="@+id/textView5" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,5 +105,23 @@
         android:layout_centerHorizontal="true"
         android:textColor="#006fff"
         android:textStyle="bold" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hang Time"
+        android:id="@+id/ht"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="______"
+        android:id="@+id/hang"
+        android:layout_marginTop="82dp"
+        android:layout_below="@+id/ht"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

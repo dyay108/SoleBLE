@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.electrisole.team17.soleble.MainActivity"
+    tools:context="com.electrisole.team17.soleble.DeviceControlActivity"
     android:background="#00000000"><![CDATA[
 
     android:id="@+id/imageView"
@@ -112,7 +112,9 @@
         android:text="Hang Time"
         android:id="@+id/ht"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:onClick="onClickWrite" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -123,5 +125,15 @@
         android:layout_marginTop="82dp"
         android:layout_below="@+id/ht"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        style="@android:style/Widget.Material.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Weight"
+        android:id="@+id/sw"
+        android:clickable="true"
+        android:layout_alignBottom="@+id/kcal"
+        android:layout_toEndOf="@+id/connection_state" />
 
 </RelativeLayout>

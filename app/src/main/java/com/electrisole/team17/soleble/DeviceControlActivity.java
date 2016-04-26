@@ -19,6 +19,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -27,20 +28,35 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class DeviceControlActivity extends Activity {
+public class DeviceControlActivity extends AppCompatActivity  {
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
@@ -65,12 +81,13 @@ public class DeviceControlActivity extends Activity {
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private ExpandableListView mGattServicesList;
     //UUID chara = UUID.fromString("c97433f0-be8f-4dc8-b6f0-5343e6100eb4");
+    public final static UUID write2 = UUID.fromString("e5207b22-5612-4d0d-a087-685b437fcb5b");
     private List<BluetoothGattService> servs=null;
     int step1 =0;
     int step2 =0;
+    String hang;
     private Button hangTime;
     final Context context = this;
-    private Button weight;
     int wght = 1;
     private Handler mHandler;
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -143,10 +160,14 @@ public class DeviceControlActivity extends Activity {
                 }
                 //Log.d(TAG, "Sum " + step1 + " " + step2);
                 mDataField.setText(String.valueOf(step1+step2));
-                mMilesData.setText((Integer.parseInt(mDataField.getText().toString()) / 2250) + " miles");
-                int stp = Integer.parseInt(mDataField.getText().toString());
-                mCaloriesData.setText(stp/20 + " calories");
-                mHangTime.setText(intent.getStringExtra("H"));
+                mMilesData.setText((Integer.parseInt(mDataField.getText().toString()) / 1900) + " miles");
+                int miles = Integer.parseInt(mDataField.getText().toString())/1900;
+                mCaloriesData.setText((0.57*wght)* miles + " calories");
+                //mHangTime.setText(intent.getStringExtra("H")+" sec");
+                if(intent.getStringExtra("H")!=null){
+                    hang = intent.getStringExtra("H");
+                }
+
             }
         }
     };
@@ -156,6 +177,7 @@ public class DeviceControlActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_control);
+
 
         mHandler = new Handler();
 
@@ -171,7 +193,7 @@ public class DeviceControlActivity extends Activity {
         final Intent intent = getIntent();
         //mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         //mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-        mDeviceAddress = "E8:FF:34:49:A9:5B";
+        mDeviceAddress = "EC:FA:06:9A:0F:AD";
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data);
         mMilesData = (TextView) findViewById(R.id.miles);
@@ -192,56 +214,6 @@ public class DeviceControlActivity extends Activity {
                 mHangTime.setText(intent.getStringExtra("H"));
             }
         });*/
-
-        weight = (Button) findViewById(R.id.sw);
-        weight.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-
-                // get prompts.xml view
-                LayoutInflater li = LayoutInflater.from(context);
-                View promptsView = li.inflate(R.layout.weight_prompt, null);
-
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                        context);
-
-                // set prompts.xml to alertdialog builder
-                alertDialogBuilder.setView(promptsView);
-
-                final EditText userInput = (EditText) promptsView
-                        .findViewById(R.id.editTextDialogUserInput);
-
-                // set dialog message
-                alertDialogBuilder
-                        .setCancelable(false)
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
-                                        // get user input and set it to result
-                                        if(!userInput.getText().toString().isEmpty()){
-                                        wght = Integer.parseInt(userInput.getText().toString());
-
-                                        }
-
-
-                                    }
-                                })
-                        .setNegativeButton("Cancel",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-
-                // create alert dialog
-                AlertDialog alertDialog = alertDialogBuilder.create();
-
-                // show it
-                alertDialog.show();
-
-            }
-        });
 
 
     }
@@ -303,6 +275,99 @@ public class DeviceControlActivity extends Activity {
         mDataField.setText(R.string.no_data);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_items, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.weight:
+                setWeight();
+                return true;
+            case R.id.save:
+                saveData();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void setWeight(){
+
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.weight_prompt, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.editTextDialogUserInput);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // get user input and set it to result
+                                if(!userInput.getText().toString().isEmpty()){
+                                    wght = Integer.parseInt(userInput.getText().toString());
+
+                                }
+
+
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+    public void saveData() {
+        //BufferedWriter fos = null;
+        //File path=new File(getFilesDir(),"myfolder");
+        //path.mkdir();
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "ElectrisoleData.txt");
+        //OutputStreamWriter fos;
+        FileOutputStream fos =null;
+        String FILENAME = file.getName();
+        Calendar c = Calendar.getInstance();
+        String string = new String(mDataField.getText()+" steps" +"\n"
+                + mMilesData.getText() + "\n"  + mCaloriesData.getText() +"\n" +"\n");
+
+
+
+            try {
+                //FileWriter fw = new FileWriter(file);
+                //fos = new OutputStreamWriter(openFileOutput(FILENAME, Context.MODE_APPEND));
+                fos = openFileOutput(FILENAME, Context.MODE_APPEND);
+                fos.write(string.getBytes());
+                fos.close();
+            } catch (IOException e) {
+            }
+
+
+            }
+
+
 
 
 
@@ -317,17 +382,19 @@ public class DeviceControlActivity extends Activity {
 
     public void onClickWrite(View v) {
         Log.d(TAG, "Button press");
-        if(mBluetoothLeService != null){
-        //byte pepe = (byte) Integer.parseInt("1");
-        //byte[] charLetra = new byte[1];
-        //charLetra[0] = pepe;
-        //mBluetoothLeService.getSupportedGattServices().get(2).getCharacteristics().get(1).setValue(charLetra);
-        //mBluetoothLeService.writeCharacteristic(mBluetoothLeService.getSupportedGattServices().get(2).getCharacteristics().get(1));
-        mBluetoothLeService.writeCharacteristic();
-        if (mBluetoothLeService.writeCharacteristic() == false) {
-            Log.w(TAG, "Failed to write characteristic");
+        mHangTime.setText(hang +" sec");
+        /*
+        if(!mBluetoothLeService.getSupportedGattServices().isEmpty()){
+       BluetoothGattCharacteristic writeChar = mBluetoothLeService.getSupportedGattServices().get(2).getCharacteristics().get(1);
+            //writeChar.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+            //writeChar.setValue(new byte[] {(byte) 0x02});
+        mBluetoothLeService.writeCharacteristic(writeChar);
+
+        if (mBluetoothLeService.writeCharacteristic(writeChar) == false) {
+            Log.w(TAG, "Failed to write characteristic ");
         }
-    }
+            else{ Log.w(TAG, "Success writing characteristic ");}
+    }*/
 
     }
 

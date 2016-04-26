@@ -3,13 +3,14 @@
     package="com.electrisole.team17.soleble">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/sole_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/sole">
         <activity android:name=".DeviceControlActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

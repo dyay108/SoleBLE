@@ -112,9 +112,14 @@ public class BluetoothLeService extends Service {
             }
         }
         @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
-                                          int status){
-            gatt.writeCharacteristic(characteristic);
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+
+            if(status==BluetoothGatt.GATT_SUCCESS)
+            {
+                gatt.writeCharacteristic(characteristic);
+            }
+
+
         }
 
         @Override
@@ -142,7 +147,7 @@ public class BluetoothLeService extends Service {
 
                 if(characteristic.getStringValue(0).trim().contains(":")){
                     String hang =  characteristic.getStringValue(0).trim();
-                    Log.d(TAG, String.format("hang "+ hang ));
+                    //Log.d(TAG, String.format("hang "+ hang ));
                     intent.putExtra("H", hang);
                 }
                 else{
@@ -303,20 +308,16 @@ public class BluetoothLeService extends Service {
         mBluetoothGatt.readCharacteristic(characteristic);
     }
 
-    public boolean writeCharacteristic() {
+    public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return false;
         }
-        byte[] value = new byte[1];
-        value[0] = (byte) 10;
-        //byte pepe = (byte) Integer.parseInt("5");
-        //byte[] charLetra = new byte[1];
-       // charLetra[0] = pepe;
-        //characteristic.setValue(charLetra);
-        mBluetoothGatt.getServices().get(2).getCharacteristics().get(1).setValue(value);
-        mBluetoothGatt.getServices().get(2).getCharacteristics().get(1).setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
-        Log.i(TAG, "characteristic " + mBluetoothGatt.getServices().get(2).getCharacteristics().get(1).getUuid().toString());// +" "+String.valueOf(charLetra));
+        characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        characteristic.setValue(0x02,BluetoothGattCharacteristic.FORMAT_UINT32,0);
+        mBluetoothGatt.writeCharacteristic(characteristic);
+        Log.i(TAG, "characteristic " + characteristic.getUuid().toString());
+        //Log.i(TAG, "characteristic " + mBluetoothGatt.getServices().get(2).getCharacteristics().get(1).getPermissions());
         boolean status = mBluetoothGatt.writeCharacteristic(mBluetoothGatt.getServices().get(2).getCharacteristics().get(1));
         return status;
 
